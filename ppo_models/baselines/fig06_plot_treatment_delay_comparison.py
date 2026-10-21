@@ -1,6 +1,6 @@
-"""Create Figure 6 from saved normal and appointment-delay summaries.
+"""Create Figure 6 from saved normal and treatment-delay summaries.
 
-- Plots baselines/models results for normal/appointment-delay modes.
+- Plots baselines/models results for normal/treatment-delay modes.
 - Saves a comparison.
 """
 
@@ -22,8 +22,8 @@ import seaborn as sns
 HERE = Path(__file__).resolve().parent
 RESULTS_DIR = HERE / "results"
 DEFAULT_NORMAL = RESULTS_DIR / "fig03_summary_final_ppo_vs_reference_protocols_24h_30x10.csv"
-DEFAULT_DELAYS = RESULTS_DIR / "fig06_summary_with_appointment_delays_24h_30x10.csv"
-DEFAULT_OUTPUT = RESULTS_DIR / "fig06_appointment_delay_effect_24h_30x10.png"
+DEFAULT_TREATMENT_DELAY = RESULTS_DIR / "fig06_summary_with_treatment_delay_24h_30x10.csv"
+DEFAULT_OUTPUT = RESULTS_DIR / "fig06_treatment_delay_effect_24h_30x10.png"
 EXCLUDED_MODES = {"paper_ppo", "random", "no_treatment"}
 
 
@@ -49,15 +49,16 @@ def load_summary(path: Path) -> dict[str, dict[str, str]]:
     return rows
 
 
-def create_plot(normal_path: Path, delays_path: Path):
+def create_plot(normal_path: Path, treatment_delay_path: Path):
     normal = load_summary(normal_path)
-    delays = load_summary(delays_path)
-    if normal.keys() != delays.keys():
-        only_normal = sorted(normal.keys() - delays.keys())
-        only_delays = sorted(delays.keys() - normal.keys())
+    treatment_delay = load_summary(treatment_delay_path)
+    if normal.keys() != treatment_delay.keys():
+        only_normal = sorted(normal.keys() - treatment_delay.keys())
+        only_treatment_delay = sorted(treatment_delay.keys() - normal.keys())
         raise ValueError(
             "The summaries contain different protocols after filtering: "
-            f"normal only={only_normal}, delays only={only_delays}"
+            f"normal only={only_normal}, "
+            f"treatment-delay only={only_treatment_delay}"
         )
 
     
@@ -66,14 +67,14 @@ def create_plot(normal_path: Path, delays_path: Path):
     normal_means = np.asarray(
         [float(normal[mode]["mean_leftover_cells"]) for mode in order]
     )
-    delay_means = np.asarray(
-        [float(delays[mode]["mean_leftover_cells"]) for mode in order]
+    treatment_delay_means = np.asarray(
+        [float(treatment_delay[mode]["mean_leftover_cells"]) for mode in order]
     )
     normal_std = np.asarray(
         [float(normal[mode]["std_leftover_cells"]) for mode in order]
     )
-    delay_std = np.asarray(
-        [float(delays[mode]["std_leftover_cells"]) for mode in order]
+    treatment_delay_std = np.asarray(
+        [float(treatment_delay[mode]["std_leftover_cells"]) for mode in order]
     )
 
     sns.set_theme(context="paper", style="whitegrid", font="DejaVu Sans")
@@ -93,25 +94,25 @@ def create_plot(normal_path: Path, delays_path: Path):
         edgecolor="#333333",
         linewidth=0.7,
         error_kw=error_style,
-        label="No appointment delay",
+        label="No treatment delay",
         zorder=3,
     )
     ax.bar(
         x + width / 2,
-        delay_means,
+        treatment_delay_means,
         width,
-        yerr=delay_std,
+        yerr=treatment_delay_std,
         capsize=3,
         color=colors[1],
         edgecolor="#333333",
         linewidth=0.7,
         hatch="//",
         error_kw=error_style,
-        label="Appointment delay",
+        label="Treatment delay",
         zorder=3,
     )
 
-    ax.set_xlabel("Model / protocol (ordered by mean without appointment delay)")
+    ax.set_xlabel("Model / protocol (ordered by mean without treatment delay)")
     ax.set_ylabel("Mean leftover cancer cells")
     ax.set_xticks(x, labels, rotation=28, ha="right", rotation_mode="anchor")
     ax.set_xlim(-0.6, len(order) - 0.4)
@@ -130,7 +131,11 @@ def create_plot(normal_path: Path, delays_path: Path):
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--normal", type=Path, default=DEFAULT_NORMAL)
-    parser.add_argument("--delays", type=Path, default=DEFAULT_DELAYS)
+    parser.add_argument(
+        "--treatment-delay",
+        type=Path,
+        default=DEFAULT_TREATMENT_DELAY,
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--dpi", type=int, default=300)
     return parser.parse_args()
@@ -140,14 +145,14 @@ def main():
     args = parse_args()
     if args.dpi <= 0:
         raise ValueError("--dpi must be positive")
-    figure = create_plot(args.normal, args.delays)
+    figure = create_plot(args.normal, args.treatment_delay)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(
         args.output,
         dpi=args.dpi,
         bbox_inches="tight",
         facecolor="white",
-        metadata={"Title": "Baseline comparison with and without appointment delays"},
+        metadata={"Title": "Baseline comparison with and without treatment delays"},
     )
     plt.close(figure)
     print(f"Saved baseline comparison to {args.output}")

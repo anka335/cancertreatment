@@ -1,0 +1,10 @@
+model,rank,protocol,action_indices,count,percentage
+normal,1,"(hour=7, dose=0.0 Gy) -> (hour=7, dose=0.0 Gy) -> (hour=7, dose=5.0 Gy) -> (hour=14, dose=5.0 Gy)","[[7, 0], [7, 0], [7, 10], [14, 10]]",100,100.0
+fraction,1,"(hour=7, dose=0.0 Gy) -> (hour=10, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=16, dose=5.0 Gy)","[[7, 0], [10, 0], [10, 10], [16, 10]]",41,41.0
+fraction,2,"(hour=7, dose=0.0 Gy) -> (hour=10, dose=0.0 Gy) -> (hour=10, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=16, dose=5.0 Gy)","[[7, 0], [10, 0], [10, 0], [10, 10], [16, 10]]",20,20.0
+fraction,3,"(hour=7, dose=0.0 Gy) -> (hour=7, dose=0.0 Gy) -> (hour=10, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=16, dose=5.0 Gy)","[[7, 0], [7, 0], [10, 0], [10, 10], [16, 10]]",19,19.0
+fraction,4,"(hour=7, dose=0.0 Gy) -> (hour=7, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=16, dose=5.0 Gy)","[[7, 0], [7, 0], [10, 10], [16, 10]]",13,13.0
+fraction,5,"(hour=7, dose=0.0 Gy) -> (hour=10, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=21, dose=5.0 Gy)","[[7, 0], [10, 0], [10, 10], [21, 10]]",4,4.0
+fraction,6,"(hour=7, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=21, dose=5.0 Gy)","[[7, 0], [10, 10], [21, 10]]",2,2.0
+fraction,7,"(hour=7, dose=0.0 Gy) -> (hour=7, dose=0.0 Gy) -> (hour=10, dose=5.0 Gy) -> (hour=21, dose=5.0 Gy)","[[7, 0], [7, 0], [10, 10], [21, 10]]",1,1.0
+mesh,1,"(hour=12, dose=3.5 Gy) -> (hour=12, dose=3.5 Gy) -> (hour=12, dose=3.5 Gy)","[[12, 7], [12, 7], [12, 7]]",100,100.0

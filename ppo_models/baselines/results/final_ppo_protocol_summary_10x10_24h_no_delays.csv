@@ -1,7 +1,0 @@
-protocol,rounds,mean_leftover_cells,std_between_round_means,median_leftover_cells,mean_complete_kill_probability,mean_cumulative_dose_gy
-Fract PPO,10,186.97,10.445379627163176,187.83499999999998,0.005,10.0
-Normalized PPO,10,190.636,6.269434140689602,191.71499999999997,0.005,10.0
-CNN Mesh PPO (final dose at hour 17),10,219.221,7.065535208162064,217.47,0.004,10.0
-CNN Mesh PPO (final dose at hour 16),10,222.805,6.086665297553696,222.29500000000002,0.002,10.0
-best protocol,10,477.465,5.767692105359133,476.65,0.0,5.0
-popular protocol,10,493.049,5.038660426034771,491.665,0.0,5.0

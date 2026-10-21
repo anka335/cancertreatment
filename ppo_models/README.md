@@ -6,7 +6,7 @@ radiotherapy scheduling study.
 
 ## Setup
 
-Run commands from `report_files`. The EMT6-Ro simulator must be available in
+Run commands from `ppo_models`. The EMT6-Ro simulator must be available in
 the sibling directory `../EMT6-Ro`, with its Python package built under
 `../EMT6-Ro/build/python`.
 
@@ -38,10 +38,9 @@ Its source is available in the
 
 - `TumorGrowthEnv/` contains the model-specific Gym environments.
 - `train_*_PPO.py` trains each PPO variant from a new model.
-- `baselines/` and `fig05_compare_model_at_steps.ipynb` reproduce Figures 2–7.
+- `baselines/` and `fig05_compare_four_models_at_steps.ipynb` contain the figure evaluations.
 - `baselines/results/models/` contains checkpoints grouped by PPO model.
 - `check_ppo_choices.py` summarizes complete protocols selected by PPO models.
-- `report/` contains the Quarto report source.
 
 ## PPO training
 
@@ -64,30 +63,33 @@ python train_cnn_mesh_PPO.py
 ```
 
 By default, training starts from a new model, uses seed 0, ten parallel
-simulations, 24-hour treatment availability, and no appointment delays.
+simulations, 24-hour treatment availability, and no treatment delays.
 Checkpoints are saved every 1,000 steps under
 `baselines/results/models/<model>/` together with logs and `settings.json`.
 
-The environment option `appointment_delays=False` disables appointment
-delays. Setting it to `True` enables the fixed positive-only delay distribution
-used in the appointment-delay evaluation.
+The original `*-v0` Gym environments remain available for the training scripts
+and older evaluations; they accept `appointment_delays`. The added `*-v1`
+environments accept `treatment_delay` and use a nonnegative delay sampled from
+the normal distribution with mean 34.4 minutes and standard deviation 46.3
+minutes. The Figure 3, 5, and 6 evaluation notebooks use `*-v1`; Figure 6
+enables the delay, while Figures 3 and 5 disable it.
 
 ## Evaluation and figures
 
 | Figure | Source | Purpose |
 |---|---|---|
 | 2 | `baselines/fig02_baselines_10x10_24h.ipynb` | Compare 25k PPO checkpoints with reference protocols over 10 rounds |
-| 3 | `baselines/fig03_baselines_30x10_24h.ipynb` | Compare final PPO checkpoints with reference protocols over 30 rounds |
+| 3 | `baselines/fig03_baselines_with_mesh_30x10_24h.ipynb` | Compare final PPO checkpoints, including Mesh PPO, with reference protocols over 30 rounds |
 | 4 | `baselines/fig04_compare_ppo_checkpoints.ipynb` | Plot Paper, Normalized, Fract, and Mesh PPO performance from 1k to 25k steps |
-| 5 | `fig05_compare_model_at_steps.ipynb` | Plot Normalized, Fract, and CNN Mesh PPO performance from 1k to 50k steps |
-| 6 | `baselines/fig06_baselines_app_delays.ipynb` | Evaluate models and protocols with appointment delays |
+| 5 | `fig05_compare_four_models_at_steps.ipynb` | Plot Normalized, Fract, Mesh, and CNN Mesh PPO performance from 1k to 50k steps |
+| 6 | `baselines/fig06_baselines_treatment_delay.ipynb` | Evaluate models and protocols with treatment delays |
 | 7 | `baselines/fig07_baselines_10h.ipynb` | Evaluate models and protocols with a 10-hour daily treatment window |
 
 Figures 6 and 7 compare their evaluation summaries with the normal 24-hour
 results. Generate the final comparison plots with:
 
 ```bash
-python baselines/fig06_plot_app_delay_comparison.py
+python baselines/fig06_plot_treatment_delay_comparison.py
 python baselines/fig07_plot_10h_comparison.py
 ```
 
@@ -96,8 +98,17 @@ with `fig01` through `fig07` correspond to the figure numbers in the report.
 In result filenames, `10x10` and `30x10` mean evaluation rounds × parallel
 simulations.
 
+Figure 5 can be redrawn from its complete saved checkpoint-evaluation CSV.
+When reevaluation is needed, checkpoint directories are discovered recursively
+under `baselines/results/models/<model_name>/`.
+
 To calculate how often PPO selects each complete treatment protocol, run:
 
 ```bash
 python check_ppo_choices.py
 ```
+
+`check_ppo_choices.py` was used to analyse the PPO-selected action sequences
+reported in the study. The results supporting the seven Fract PPO sequences
+and four grouped protocols are stored in
+`baselines/results/ppo_choice_frequencies.csv`.
